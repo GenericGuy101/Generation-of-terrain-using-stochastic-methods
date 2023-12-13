@@ -77,7 +77,7 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
 
     for iteration in range(iterations):
         # Generar un nuevo terreno vecino
-        new_terrain = current_terrain + np.random.pareto(a=1.5,size = (a,b))
+        new_terrain = current_terrain + np.random.pareto(a=1.8,size = (a,b))
         new_energy = terrain_cost_proximity(new_terrain)
 
         # Calcular la diferencia de energía
@@ -94,14 +94,14 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
     return current_terrain
 
 # Parámetros
-terrain_size = 200
+terrain_size = 5000
 
 scale = 20.0
 octaves = 6
 persistence = 0.5
 lacunarity = 2.0
 seed = 42
-iterations = 5000
+iterations = 600
 initial_temperature = 1.0
 cooling_rate = 0.9
 
@@ -116,13 +116,13 @@ plt.figure(figsize=(12, 6))
 
 plt.imshow(initial_terrain, cmap='terrain', origin='lower')
 plt.colorbar()
-plt.title('Terreno Generado con Ruido Perlin')
+plt.title('Terreno Inicial (in tratamiento)')
 
 # Visualizar terreno generado
 plt.figure()
 plt.imshow(final_terrain, cmap='terrain', origin='lower')
 plt.colorbar()
-plt.title('Terreno Generado con Simulated Annealing y Ruido Perlin')
+plt.title('Cielo Nocturno Virtual (Simulated Annealing)')
 
 plt.tight_layout()
 plt.show()

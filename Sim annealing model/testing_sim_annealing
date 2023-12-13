@@ -4,6 +4,14 @@ import noise
 
 # Función para generar un terreno inicial aleatorio usando ruido Perlin
 def generate_perlin_terrain(size, scale, octaves, persistence, lacunarity, seed):
+    #genera un Array 2D de elementos de rango [-1,1] usando perlin noise:
+    #Size : las dimensiones del terreno generado, en este caso solo puede ser un cuadrado
+    #Scale : el grado de zoom que tendrá el terreno
+    #Octave : agrega detalles a las superficie, por ejemplo octave 1 pueden ser las montañas,
+    #octave 2 pueden ser las rocas, son como multiples pasadas al terreno para agregarle detalle
+    #Lacuranity : ajusta la frequencia en la que se agrega detalle en octave,
+    #un valor deseable suele ser 2
+    #Persistence : determina la influencia que tiene cada octave
     terrain = np.zeros((size, size))
     for i in range(size):
         for j in range(size):
@@ -13,10 +21,10 @@ def generate_perlin_terrain(size, scale, octaves, persistence, lacunarity, seed)
 # Función de evaluación basada en la pendiente del terreno
 def evaluate_terrain(terrain):
     # Calcular la pendiente del terreno
+
     gradient_x, gradient_y = np.gradient(terrain)
     val = gradient_x**2 + gradient_y**2
-    if val.any(t<0 for t in val) :
-        print("slope value\n",slope)
+     
     slope = np.sqrt(gradient_x**2 + gradient_y**2)
     # En este ejemplo, la función de evaluación es la suma de las pendientes
     return np.sum(slope)

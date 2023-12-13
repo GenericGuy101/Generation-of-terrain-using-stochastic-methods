@@ -43,7 +43,7 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
         energy_difference = new_energy - current_energy
 
         # Decidir si aceptar el nuevo terreno
-        if energy_difference < 0 or np.random.rand() < np.exp(-energy_difference / initial_temperature):
+        if energy_difference < 0 or np.random.rand() < np.exp(-energy_difference / (initial_temperature - 1e-15)):
             current_terrain = new_terrain
             current_energy = new_energy
 
@@ -59,9 +59,9 @@ octaves = 6
 persistence = 0.5
 lacunarity = 2.0
 seed = 42
-iterations = 10000
+iterations = 1000
 initial_temperature = 1.0
-cooling_rate = 0.5
+cooling_rate = 0.7
 
 # Generar terreno inicial usando ruido Perlin
 initial_terrain = generate_perlin_terrain(terrain_size, scale, octaves, persistence, lacunarity, seed)

@@ -14,9 +14,10 @@ def generate_perlin_terrain(size, scale, octaves, persistence, lacunarity, seed)
 def evaluate_terrain(terrain):
     # Calcular la pendiente del terreno
     gradient_x, gradient_y = np.gradient(terrain)
-    print("gradiente x\n", gradient_x, "gradiente y\n", gradient_y)
+    val = gradient_x**2 + gradient_y**2
+    if val.any(t<0 for t in val) :
+        print("slope value\n",slope)
     slope = np.sqrt(gradient_x**2 + gradient_y**2)
-    print("slope value\n",slope)
     # En este ejemplo, la función de evaluación es la suma de las pendientes
     return np.sum(slope)
 

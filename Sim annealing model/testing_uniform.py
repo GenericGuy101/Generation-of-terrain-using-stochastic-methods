@@ -77,7 +77,7 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
 
     for iteration in range(iterations):
         # Generar un nuevo terreno vecino
-        new_terrain = current_terrain + np.random.pareto(a = 2.5 ,size = (a,b))
+        new_terrain = current_terrain + np.random.beta(1, 5 , size = current_terrain.shape )
         new_energy = terrain_cost_proximity(new_terrain)
 
         # Calcular la diferencia de energía

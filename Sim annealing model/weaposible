@@ -1,0 +1,64 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import random
+
+def generate_initial_state(size):
+    return np.random.rand(size, size)
+
+def calculate_energy(terrain):
+    # Puedes definir tu propia función de energía aquí.
+    # Una opción simple es calcular la pendiente promedio del terreno.
+    gradient_x, gradient_y = np.gradient(terrain)
+    total_gradient = np.sqrt(gradient_x**2 + gradient_y**2)
+    return np.mean(total_gradient)
+
+def generate_neighbor(state, temperature):
+    # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
+    neighbor = state.copy()
+    num_changes = int(temperature * state.size)
+    for _ in range(num_changes):
+        x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
+        neighbor[x, y] += np.random.normal(0, temperature)
+    return neighbor
+
+def simulated_annealing(initial_state, max_iterations, cooling_rate):
+    current_state = initial_state
+    current_energy = calculate_energy(current_state)
+
+    for iteration in range(max_iterations):
+        temperature = max(1e-6, 1.0 - cooling_rate * iteration)
+        neighbor_state = generate_neighbor(current_state, temperature)
+        neighbor_energy = calculate_energy(neighbor_state)
+
+        # Acepta el nuevo estado con una probabilidad dada por la diferencia de energía y la temperatura.
+        if neighbor_energy < current_energy or random.uniform(0, 1) < math.exp((current_energy - neighbor_energy) / temperature):
+            current_state = neighbor_state
+            current_energy = neighbor_energy
+
+        if iteration % 100 == 0:
+            print(f"Iteration {iteration}, Energy: {current_energy}")
+
+    return current_state
+
+if __name__ == "__main__":
+    # Parámetros
+    terrain_size = 100
+    initial_temperature = 1.0
+    max_iterations = 5000
+    cooling_rate = 0.001
+
+    # Funciona rico:
+    #  terrain_size = 100
+    #  initial_temperature = 1.0
+    #  max_iterations = 5000
+    #  cooling_rate = 0.001
+
+    # Genera estado inicial y aplica Simulated Annealing
+    initial_state = generate_initial_state(terrain_size)
+    final_state = simulated_annealing(initial_state, max_iterations, cooling_rate)
+
+    # Visualización del terreno final
+    plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
+    plt.title('Simulated Annealing Terrain')
+    plt.show()

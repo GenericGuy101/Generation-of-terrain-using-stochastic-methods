@@ -13,7 +13,8 @@ def normalize_array(arr):
     normalized_array = -1 + 2 * (arr - min_val) / (max_val - min_val)
     return normalized_array
 
-
+def generate_random_matrix(size):
+    return np.random.uniform(low=-1, high=1, size=(size,size))
 
 # Función para generar un terreno inicial aleatorio usando ruido Perlin
 def generate_perlin_terrain(size, scale, octaves, persistence, lacunarity, seed):
@@ -107,7 +108,7 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
 
     for iteration in range(iterations):
         # Generar un nuevo terreno vecino
-        new_terrain = current_terrain - generate_worley_noise(200, 5) 
+        new_terrain = current_terrain + generate_worley_noise(a , 1)
         new_energy = evaluate_terrain(new_terrain)
 
         # Calcular la diferencia de energía
@@ -136,7 +137,7 @@ initial_temperature = 1.0
 cooling_rate = 0.9
 
 # Generar terreno inicial usando ruido Perlin
-initial_terrain = generate_worley_noise(size, 17)
+initial_terrain = generate_random_matrix(size)
 
 # Aplicar Simulated Annealing
 final_terrain1 = simulated_annealing(initial_terrain, iterations, initial_temperature, cooling_rate)
@@ -156,10 +157,7 @@ plt.imshow(final_terrain1, cmap='terrain', origin='lower')
 plt.colorbar(label='Distance to nearest point')
 plt.title(f"Worley Noise with {num_points} points")
 plt.legend()
-plt.show()
 
 plt.tight_layout()
 plt.show()
 
-
-print(final_terrain1)

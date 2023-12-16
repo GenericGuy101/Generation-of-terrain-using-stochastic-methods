@@ -58,7 +58,14 @@ if __name__ == "__main__":
     initial_state = generate_initial_state(terrain_size)
     final_state = simulated_annealing(initial_state, max_iterations, cooling_rate)
 
+    # Visualización del terreno inicial
+    plt.subplot(1, 2, 1)
+    plt.imshow(initial_state, cmap='terrain', interpolation='bilinear')
+    plt.title('Terreno Inicial')
+
     # Visualización del terreno final
+    plt.subplot(1, 2, 2)
     plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
     plt.title('Simulated Annealing Terrain')
+
     plt.show()

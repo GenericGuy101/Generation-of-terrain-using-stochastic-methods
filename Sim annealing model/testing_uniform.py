@@ -126,3 +126,4 @@ plt.title('Terreno Generado con Simulated Annealing y Ruido Perlin')
 
 plt.tight_layout()
 plt.show()
+

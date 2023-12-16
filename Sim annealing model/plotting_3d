@@ -8,46 +8,6 @@ import scipy.ndimage
 from PIL import Image
 #from arrows3dplot import * # python_file in project with class
 import matplotlib.cm as cm
-import math 
-import random
-
-def generate_initial_state(size):
-    return np.random.rand(size, size)
-
-def calculate_energy(terrain):
-    # Puedes definir tu propia función de energía aquí.
-    # Una opción simple es calcular la pendiente promedio del terreno.
-    gradient_x, gradient_y = np.gradient(terrain)
-    total_gradient = np.sqrt(gradient_x**2 + gradient_y**2)
-    return np.mean(total_gradient)
-
-def generate_neighbor(state, temperature):
-    # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
-    neighbor = state.copy()
-    num_changes = int(temperature * state.size)
-    for _ in range(num_changes):
-        x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
-        neighbor[x, y] += np.random.normal(0, temperature)
-    return neighbor
-
-def simulated_annealing(initial_state, max_iterations, cooling_rate):
-    current_state = initial_state
-    current_energy = calculate_energy(current_state)
-
-    for iteration in range(max_iterations):
-        temperature = max(1e-6, 1.0 - cooling_rate * iteration)
-        neighbor_state = generate_neighbor(current_state, temperature)
-        neighbor_energy = calculate_energy(neighbor_state)
-
-        # Acepta el nuevo estado con una probabilidad dada por la diferencia de energía y la temperatura.
-        if neighbor_energy < current_energy or random.uniform(0, 1) < math.exp((current_energy - neighbor_energy) / temperature):
-            current_state = neighbor_state
-            current_energy = neighbor_energy
-
-        if iteration % 100 == 0:
-            print(f"Iteration {iteration}, Energy: {current_energy}")
-
-    return current_state
 
 def ploteo3d(terrain,size):
 
@@ -61,8 +21,8 @@ def ploteo3d(terrain,size):
     # open georeference TIF file
 
     # create arrays and declare x,y,z variables
-    lin_x = np.linspace(0,1,terrain.shape[0],endpoint=False)
-    lin_y = np.linspace(0,1,terrain.shape[1],endpoint=False)
+    lin_x = np.linspace(0,500,terrain.shape[0],endpoint=False)
+    lin_y = np.linspace(0,500,terrain.shape[1],endpoint=False)
     y,x = np.meshgrid(lin_y,lin_x)
 
     z = terrain
@@ -83,6 +43,7 @@ def ploteo3d(terrain,size):
     ax = plt.axes(projection='3d')
     ax.azim = -30
     ax.elev = 0
+    ax.set_box_aspect((x_ratio,y_ratio,((x_ratio+y_ratio)/8)))
     #ax.arrow3D(1,1,z_smoothed_max, -1,0,1, mutation_scale=20, ec ='black', fc='red') #draw arrow to "north" which is not correct north. But with georeferenced sources it should work
     surf = ax.plot_surface(x,y,z_smoothed, cmap='terrain', edgecolor='none')
     # setting colors for colorbar range
@@ -100,30 +61,8 @@ def ploteo3d(terrain,size):
     #ax.add_collection3d(Poly3DCollection(verts, alpha=0.5))
     ax.set_xlabel('X Axis')
     ax.set_ylabel('Y Axis')
+    ax.set_xlim(0,500)
+    ax.set_ylim(0,500)
     fig.tight_layout()
 
-
-
-
-if __name__ == "__main__":
-    # Parámetros
-    terrain_size = 30
-    initial_temperature = 1.0
-    max_iterations = 5000
-    cooling_rate = 0.001
-
-    # Funciona rico:
-    #  terrain_size = 100
-    #  initial_temperature = 1.0
-    #  max_iterations = 5000
-    #  cooling_rate = 0.001
-
-    # Genera estado inicial y aplica Simulated Annealing
-    initial_state = generate_initial_state(terrain_size)
-    final_state = simulated_annealing(initial_state, max_iterations, cooling_rate)
-
-    # Visualización del terreno final
-    plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
-    plt.title('Simulated Annealing Terrain')
-    ploteo3d(final_state,terrain_size)
-    plt.show()
+plt.show()

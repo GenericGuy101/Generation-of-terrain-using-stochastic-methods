@@ -128,13 +128,13 @@ def ploteo3d(terrain, size, title="3D Plot"):
 
     plt.show()
 
-
 if __name__ == "__main__":
     # Parámetros
     terrain_size = 30
     initial_temperature = 1.0
-    max_iterations = 3000
+    max_iterations = 7000
     cooling_rate = 0.01
+    seed = 42
 
     # Genera estado inicial y aplica Simulated Annealing
     initial_state = generate_initial_state(terrain_size)
@@ -157,6 +157,6 @@ if __name__ == "__main__":
     plt.subplot(1, 2, 2)
     plt.title('Simulated Annealing Terrain')
     plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
-    ploteo3d(final_state,terrain_size, title = "Simulated Annealing Terrain")
+    ploteo3d(final_state,terrain_size, title = "Terreno Simulated Annealing")
 
     plt.show()

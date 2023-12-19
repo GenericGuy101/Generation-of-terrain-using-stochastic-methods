@@ -174,15 +174,15 @@ if __name__ == "__main__":
 
     # Visualización del terreno inicial
     plt.subplot(1, 2, 1)
-    plt.title('Pearlin Noise Terrain')
+    plt.title('Terreno Perlin Noise')
     plt.imshow(perlin_state, cmap='terrain', interpolation='bilinear')
-    ploteo3d(perlin_state,terrain_size, title = "Pearlin Noise Terrain")
+    ploteo3d(perlin_state,terrain_size, title = "Terreno Perlin Noise")
 
     # Visualización del terreno final
     plt.subplot(1, 2, 2)
     plt.title('Simulated Annealing Terrain')
     plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
-    ploteo3d(final_state,terrain_size, title = "Simulated Annealing Terrain")
+    ploteo3d(final_state,terrain_size, title = "Terreno Simulated Annealing")
 
     plt.show()
 

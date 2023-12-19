@@ -147,34 +147,42 @@ def ploteo3d(terrain, size, title="3D Plot"):
     plt.show()
 
 # Parámetros
-terrain_size = 50
+terrain_size = 30
 scale = 20.0
 octaves = 6
 persistence = 0.5
 lacunarity = 2.0
 seed = 42
-iterations = 1000
+iterations = 7000
 initial_temperature = 1.0
-cooling_rate = 0.7
+cooling_rate = 0.01
 
 # Generar terreno inicial usando ruido Perlin
 initial_terrain = generate_perlin_terrain(terrain_size, scale, octaves, persistence, lacunarity, seed)
 
 # Aplicar Simulated Annealing
-final_terrain = simulated_annealing(initial_terrain, iterations, cooling_rate)[0]
+final_terrain , iteration_arr, energy_arr = simulated_annealing(initial_terrain, iterations, cooling_rate)
 plt.figure(figsize=(12, 6))
+
+plt.plot(iteration_arr, energy_arr)
+plt.xlabel('Iteración')
+plt.ylabel('Energía')
+plt.title('Simulated Annealing/Perlin Noise - Resultados de Energía')
+plt.yscale('log')
+plt.show()
 
 plt.imshow(initial_terrain, cmap='terrain', origin='lower')
 plt.colorbar()
-plt.title('Terreno Generado con Perlin Noise')
+plt.title('Terreno Perlin Noise')
 
 # Visualizar terreno generado
 plt.figure()
 plt.imshow(final_terrain, cmap='terrain', origin='lower')
 plt.colorbar()
-plt.title('Terreno Generado con Simulated Annealing y Perlin Noise')
+plt.title('Terreno Simulated Annealing / Perlin Noise')
 
-ploteo3d(initial_terrain,terrain_size)
-ploteo3d(final_terrain,terrain_size)
+ploteo3d(initial_terrain,terrain_size, 'Terreno Perlin Noise' )
+ploteo3d(final_terrain,terrain_size, 'Terreno Simulated Annealing / Perlin Noise')
 plt.tight_layout()
+
 plt.show()

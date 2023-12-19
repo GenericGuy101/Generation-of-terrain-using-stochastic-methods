@@ -152,6 +152,7 @@ if __name__ == "__main__":
     initial_temperature = 1.0
     max_iterations = 7000
     cooling_rate = 0.01
+    seed = 42
 
     # Genera estado inicial y aplica Simulated Annealing
     initial_state = markov_chain_terrain(terrain_size,100,0.1)
@@ -160,20 +161,20 @@ if __name__ == "__main__":
     plt.plot(iteration_arr, energy_arr)
     plt.xlabel('Iteración')
     plt.ylabel('Energía')
-    plt.title('Simulated Annealing - resultados de energía')
+    plt.title('Simulated Annealing/Markov Chain - Resultados de Energía')
     plt.yscale('log')
     plt.show()
 
     # Visualización del terreno inicial
     plt.subplot(1, 2, 1)
-    plt.title('Terreno Inicial')
+    plt.title('Terreno Inicial Markov Chain')
     plt.imshow(initial_state, cmap='terrain', interpolation='bilinear')
-    ploteo3d(initial_state,terrain_size, title = "Markov Chain Terrain")
+    ploteo3d(initial_state,terrain_size, title = "Terreno Inicial Markov Chain")
 
     # Visualización del terreno final
     plt.subplot(1, 2, 2)
-    plt.title('Simulated Annealing Terrain')
+    plt.title('Terreno Simulated Annealing / Markov Chain ')
     plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
-    ploteo3d(final_state,terrain_size, title = "Simulated Annealing / Markov Chain Terrain")
+    ploteo3d(final_state,terrain_size, title = "Terreno Simulated Annealing / Markov Chain")
 
     plt.show()

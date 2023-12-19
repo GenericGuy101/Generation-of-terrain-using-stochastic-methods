@@ -68,27 +68,28 @@ if __name__ == "__main__":
     terrain_size = 200
     initial_temperature = 1
     max_iterations = 5000
-    cooling_rate = 0.001
+    cooling_rate = 0.01
+    seed = 43
 
     # Genera estado inicial y aplica Simulated Annealing
-    initial_state = np.random.pareto(a=1.5, size = (terrain_size,terrain_size))
+    initial_state = np.random.pareto(a = 1.8, size = (terrain_size,terrain_size))
     final_state , iteration_arr, energy_arr = simulated_annealing(initial_state, max_iterations, cooling_rate)
 
     plt.plot(iteration_arr, energy_arr)
     plt.xlabel('Iteración')
     plt.ylabel('Energía')
-    plt.title('Simulated Annealing - resultados de energía')
+    plt.title('Pareto / Simulated Annealing - Resultados de Energía')
     plt.yscale('log')
     plt.show()
 
     # Visualización del terreno inicial
     plt.subplot(1, 2, 1)
-    plt.title('Pareto Texture')
+    plt.title('Textura Pareto')
     plt.imshow(initial_state, cmap='terrain', interpolation='bilinear')
 
     # Visualización del terreno final
     plt.subplot(1, 2, 2)
-    plt.title('Simulated Annealing \ Pareto Texture')
+    plt.title('Textura Simulated Annealing / Pareto Texture')
     plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
 
     plt.show()

@@ -11,8 +11,21 @@ import matplotlib.cm as cm
 import math 
 import random
 
-def generate_initial_state(size):
-    return np.random.rand(size, size)
+# Función para generar un terreno inicial aleatorio usando ruido Perlin
+def generate_perlin_terrain(size, scale, octaves, persistence, lacunarity, seed):
+    #genera un Array 2D de elementos de rango [-1,1] usando perlin noise:
+    #Size : las dimensiones del terreno generado, en este caso solo puede ser un cuadrado
+    #Scale : el grado de zoom que tendrá el terreno
+    #Octave : agrega detalles a las superficie, por ejemplo octave 1 pueden ser las montañas,
+    #octave 2 pueden ser las rocas, son como multiples pasadas al terreno para agregarle detalle
+    #Lacuranity : ajusta la frequencia en la que se agrega detalle en octave,
+    #un valor deseable suele ser 2
+    #Persistence : determina la influencia que tiene cada octave
+    terrain = np.zeros((size, size))
+    for i in range(size):
+        for j in range(size):
+            terrain[i][j] = noise.pnoise2(i/scale, j/scale, octaves=octaves, persistence=persistence, lacunarity=lacunarity, repeatx=size, repeaty=size, base=seed)
+    return terrain
 
 def calculate_energy(matrix):
     # Puedes definir tu propia función de energía aquí.
@@ -52,8 +65,8 @@ def calculate_energy(matrix):
 def generate_neighbor(state, temperature):
     # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
     neighbor = state.copy()
-    #num_changes = int( temperature * state.size)
-    num_changes = int(np.shape(state)[0]/10)
+    #num_changes = int(np.shape(state)[0]/10)
+    num_changes = 2
     for _ in range(num_changes):
         x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
         neighbor[x, y] += np.random.normal(0, temperature)
@@ -88,29 +101,21 @@ def simulated_annealing(initial_state, max_iterations, cooling_rate):
 
 
         # Add other termination conditions if needed
-
-
     return current_state, iteration_arr , energy_arr
 
-def ploteo3d(terrain,size):
 
-    # Set max number of pixel to: 'None' to prevent errors. Its not nice, but works for that case. Big images will load RAM+CPU heavily (like DecompressionBomb)
-    #Image.MAX_IMAGE_PIXELS = None # first we set no limit to open
-    #img = Image.open(source_file_dem)
-
+def ploteo3d(terrain, size, title="3D Plot"):
     # get aspect ratio of tif file for late plot box-plot-ratio
-    y_ratio,x_ratio = size,size
+    y_ratio, x_ratio = size, size
 
-    # open georeference TIF file
-
-    # create arrays and declare x,y,z variables
-    lin_x = np.linspace(0,1,terrain.shape[0],endpoint=False)
-    lin_y = np.linspace(0,1,terrain.shape[1],endpoint=False)
-    y,x = np.meshgrid(lin_y,lin_x)
+    # create arrays and declare x, y, z variables
+    lin_x = np.linspace(0, 500, terrain.shape[0], endpoint=False)
+    lin_y = np.linspace(0, 500, terrain.shape[1], endpoint=False)
+    y, x = np.meshgrid(lin_y, lin_x)
 
     z = terrain
 
-    # Apply gaussian filter, with sigmas as variables. Higher sigma = more smoothing and more calculations. Downside: min and max values do change due to smoothing
+    # Apply gaussian filter, with sigmas as variables. Higher sigma = more smoothing and more calculations.
     sigma_y = 1
     sigma_x = 1
     sigma = [sigma_y, sigma_x]
@@ -119,66 +124,57 @@ def ploteo3d(terrain,size):
     # Some min and max and range values coming from gaussian_filter calculations
     z_smoothed_min = np.amin(z_smoothed)
     z_smoothed_max = np.amax(z_smoothed)
-    z_range = z_smoothed_max - z_smoothed_min
 
-    # Creating figure
-    fig = plt.figure(figsize=(12,10))
+    # Creating figure with the specified title
+    fig = plt.figure(figsize=(12, 10))
+    fig.suptitle(title, fontsize=16)
     ax = plt.axes(projection='3d')
     ax.azim = -30
     ax.elev = 0
-    #ax.arrow3D(1,1,z_smoothed_max, -1,0,1, mutation_scale=20, ec ='black', fc='red') #draw arrow to "north" which is not correct north. But with georeferenced sources it should work
-    surf = ax.plot_surface(x,y,z_smoothed, cmap='terrain', edgecolor='none')
-    # setting colors for colorbar range
+    ax.set_box_aspect((x_ratio, y_ratio, ((x_ratio + y_ratio) / 8)))
+
+    surf = ax.plot_surface(x, y, z_smoothed, cmap='terrain', edgecolor='none')
+
     m = cm.ScalarMappable(cmap=surf.cmap, norm=surf.norm)
     m.set_array(z_smoothed)
-    #cbar = fig.colorbar(m, shrink=0.5, aspect=20, ticks=[z_smoothed_min, 0, (z_range*0.25+z_smoothed_min), (z_range*0.5+z_smoothed_min), (z_range*0.75+z_smoothed_min), z_smoothed_max])
-    #cbar.ax.set_yticklabels([f'{z_smoothed_min}', ' ',  f'{(z_range*0.25+z_smoothed_min)}', f'{(z_range*0.5+z_smoothed_min)}', f'{(z_range*0.75+z_smoothed_min)}', f'{z_smoothed_max}'])
-    #plt.xticks([])  # disabling xticks by Setting xticks to an empty list
-    #plt.yticks([])  # disabling yticks by setting yticks to an empty list
-    # draw flat rectangle at z = 0 to indicate where mean sea level is in 3d
-    #x_rectangle = [0,1,1,0]
-    #y_rectangle = [0,0,1,1]
-    #z_rectangle = [0,0,0,0]
-    #verts = [list(zip(x_rectangle,y_rectangle,z_rectangle))]
-    #ax.add_collection3d(Poly3DCollection(verts, alpha=0.5))
+
     ax.set_xlabel('X Axis')
     ax.set_ylabel('Y Axis')
+    ax.set_xlim(0, 500)
+    ax.set_ylim(0, 500)
     fig.tight_layout()
 
-
-if __name__ == "__main__":
-    # Parámetros
-    terrain_size = 30
-    initial_temperature = 1.0
-    max_iterations = 5000
-    cooling_rate = 0.00000001
-
-    # Funciona rico:
-    #  terrain_size = 100
-    #  initial_temperature = 1.0
-    #  max_iterations = 5000
-    #  cooling_rate = 0.001
-
-    # Genera estado inicial y aplica Simulated Annealing
-    initial_state = generate_initial_state(terrain_size)
-    final_state , iteration_arr, energy_arr = simulated_annealing(initial_state, max_iterations, cooling_rate)
-
-     
-    plt.plot(iteration_arr, energy_arr)
-    plt.xlabel('Iteración')
-    plt.ylabel('Energía')
-    plt.title('Simulated Annealing - resultados de energía')
-    plt.yscale('log')
     plt.show()
 
-    # Visualización del terreno inicial
-    plt.subplot(1, 2, 1)
-    plt.imshow(initial_state, cmap='terrain', interpolation='bilinear')
-    plt.title('Terreno Inicial')
+# Parámetros
+terrain_size = 50
+scale = 20.0
+octaves = 6
+persistence = 0.5
+lacunarity = 2.0
+seed = 42
+iterations = 1000
+initial_temperature = 1.0
+cooling_rate = 0.7
 
-    # Visualización del terreno final
-    plt.subplot(1, 2, 2)
-    plt.imshow(final_state, cmap='terrain', interpolation='bilinear')
-    plt.title('Simulated Annealing Terrain')
-    ploteo3d(final_state,terrain_size)
-    plt.show()
+# Generar terreno inicial usando ruido Perlin
+initial_terrain = generate_perlin_terrain(terrain_size, scale, octaves, persistence, lacunarity, seed)
+
+# Aplicar Simulated Annealing
+final_terrain = simulated_annealing(initial_terrain, iterations, cooling_rate)[0]
+plt.figure(figsize=(12, 6))
+
+plt.imshow(initial_terrain, cmap='terrain', origin='lower')
+plt.colorbar()
+plt.title('Terreno Generado con Perlin Noise')
+
+# Visualizar terreno generado
+plt.figure()
+plt.imshow(final_terrain, cmap='terrain', origin='lower')
+plt.colorbar()
+plt.title('Terreno Generado con Simulated Annealing y Perlin Noise')
+
+ploteo3d(initial_terrain,terrain_size)
+ploteo3d(final_terrain,terrain_size)
+plt.tight_layout()
+plt.show()

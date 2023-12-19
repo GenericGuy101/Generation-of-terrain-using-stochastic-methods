@@ -65,15 +65,11 @@ def terrain_cost_proximity(terrain, threshold=0.3, penalty_factor=10, proximity_
     return cost
 
 
-
-
 # Simulated Annealing para generar terreno realista
 def simulated_annealing(initial_terrain, iterations, initial_temperature, cooling_rate):
     current_terrain = initial_terrain.copy()
     current_energy = terrain_cost_proximity(current_terrain)
     a,b = np.shape(initial_terrain)
-
-
 
     for iteration in range(iterations):
         # Generar un nuevo terreno vecino
@@ -94,7 +90,7 @@ def simulated_annealing(initial_terrain, iterations, initial_temperature, coolin
     return current_terrain
 
 # Parámetros
-terrain_size = 5000
+terrain_size = 200
 
 scale = 20.0
 octaves = 6

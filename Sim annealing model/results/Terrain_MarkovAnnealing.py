@@ -28,7 +28,6 @@ def markov_chain_terrain(size, iterations, transition_std):
             for y in range(1, size-1):
                 neighborhood = terrain[x-1:x+2, y-1:y+2]
                 new_terrain[x, y] = np.mean(neighborhood) + np.random.normal(0, transition_std)
-
         terrain = new_terrain
 
     return terrain
@@ -67,8 +66,7 @@ def calculate_energy(matrix):
 def generate_neighbor(state, temperature):
     # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
     neighbor = state.copy()
-    #num_changes = int(np.shape(state)[0]/10)
-    num_changes = 2
+    num_changes = int(np.shape(state)[0]/10)
     for _ in range(num_changes):
         x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
         neighbor[x, y] += np.random.normal(0, temperature)

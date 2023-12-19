@@ -65,8 +65,8 @@ def calculate_energy(matrix):
 def generate_neighbor(state, temperature):
     # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
     neighbor = state.copy()
-    #num_changes = int(np.shape(state)[0]/10)
-    num_changes = 2
+    num_changes = int(np.shape(state)[0]/10)
+    
     for _ in range(num_changes):
         x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
         neighbor[x, y] += np.random.normal(0, temperature)

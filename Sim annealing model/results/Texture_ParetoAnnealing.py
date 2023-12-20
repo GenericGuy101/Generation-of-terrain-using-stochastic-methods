@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import scipy.ndimage
 from PIL import Image
-#from arrows3dplot import * # python_file in project with class
+# from arrows3dplot import * # python_file in project with class
 import matplotlib.cm as cm
-import math 
+import math
 import random
 
 
@@ -21,16 +21,20 @@ def evaluate_terrain(terrain):
     # En este ejemplo, la función de evaluación es la suma de las pendientes
     return np.sum(slope)
 
+
 def generate_neighbor(state, temperature):
     # Genera un vecino cambiando aleatoriamente algunos puntos del terreno.
     neighbor = state.copy()
     num_changes = int(np.shape(state)[0])
     for _ in range(num_changes):
-        x, y = np.random.randint(0, state.shape[0]), np.random.randint(0, state.shape[1])
+        x, y = np.random.randint(
+            0, state.shape[0]), np.random.randint(0, state.shape[1])
         neighbor[x, y] += np.random.normal(0, temperature)
     return neighbor
 
 # Simulated Annealing para generar terreno realista
+
+
 def simulated_annealing(initial_state, max_iterations, cooling_rate):
     current_state = initial_state
     current_energy = evaluate_terrain(current_state)
@@ -38,7 +42,7 @@ def simulated_annealing(initial_state, max_iterations, cooling_rate):
     energy_arr = []
     for iteration in range(max_iterations):
         temperature = initial_temperature / (1 + cooling_rate * iteration)
-        
+
         # Perturb the current state
         new_state = generate_neighbor(current_state, temperature)
         new_energy = evaluate_terrain(new_state)
@@ -58,10 +62,10 @@ def simulated_annealing(initial_state, max_iterations, cooling_rate):
         iteration_arr.append(iteration)
         energy_arr.append(current_energy)
 
-
         # Add other termination conditions if needed
 
-    return current_state, iteration_arr , energy_arr
+    return current_state, iteration_arr, energy_arr
+
 
 if __name__ == "__main__":
     # Parámetros
@@ -72,8 +76,9 @@ if __name__ == "__main__":
     seed = 43
 
     # Genera estado inicial y aplica Simulated Annealing
-    initial_state = np.random.pareto(a = 1.8, size = (terrain_size,terrain_size))
-    final_state , iteration_arr, energy_arr = simulated_annealing(initial_state, max_iterations, cooling_rate)
+    initial_state = np.random.pareto(a=1.8, size=(terrain_size, terrain_size))
+    final_state, iteration_arr, energy_arr = simulated_annealing(
+        initial_state, max_iterations, cooling_rate)
 
     plt.plot(iteration_arr, energy_arr)
     plt.xlabel('Iteración')
